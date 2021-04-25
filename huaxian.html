@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://unpkg.com/tailwindcss@^2/dist/tailwind.min.css" rel="stylesheet">
+    <title>画线</title>
+</head>
+
+<body>
+    <div class="container mx-auto flex flex-col h-screen">
+        <div class="flex justify-around h-20 bg-gray-300" id="header">
+            <div class="border-blue-500 border-solid border-2 h-8 w-20 text-center self-center">开始</div>
+            <div class="border-blue-500 border-solid border-2 h-8 w-20 text-center self-center">重载</div>
+        </div>
+        <div class="flex flex-grow bg-gray-100" id="playground">
+            <canvas id="canvas"></canvas>
+        </div>
+        <div class="flex h-40 bg-gray-300">
+            <div class="w-3/5 h-8 text-center self-center">红方</div>
+            <div class="w-2/5 h-8 text-center self-center">30s</div>
+        </div>
+    </div>
+    <script type='text/javascript' src='http://cdnjs.cloudflare.com/ajax/libs/fabric.js/1.4.0/fabric.min.js'></script>
+    <script>
+        const log = (x) => console.log('debug: ', x);
+        const gameObj = {
+            currentPlayer: 0, // 0: red, 1: blue
+            decidedTime: 10, // seconds
+            blockItems: [],
+            canvas: document.querySelector('#canvas'),
+            userLastTouch: null,
+            offsetY: document.querySelector('#header').clientHeight,
+        }
+        function init() {
+            gameObj.currentPlayer = 0;
+            gameObj.blockItems = [];
+            gameObj.getPlayerColor = () => gameObj.currentPlayer ? 'red' : 'black';
+            var canvas = new fabric.Canvas('canvas');
+            canvas.isDrawingMode = true;
+            canvas.freeDrawingBrush.width = 5;
+            canvas.freeDrawingBrush.color = gameObj.getPlayerColor();
+            gameObj.canvasCtx = canvas;
+            for (let i = 0; i < 10; i++) {
+                gameObj.blockItems.push(util.getRandomArbitrary(1, 11));
+            }
+            setInterval(() => {
+                gameObj.currentPlayer = +!Boolean(gameObj.currentPlayer);
+                gameObj.canvasCtx.freeDrawingBrush.color = gameObj.getPlayerColor();
+                log(`current player ${gameObj.currentPlayer}`);
+            }, gameObj.decidedTime * 1000)
+            update();
+        }
+        gameObj.canvas.addEventListener('touchstart', (e) => {
+            e.preventDefault();
+            const touch = e.changedTouches[0];
+            gameObj.userLastTouch = [util.approx(touch.clientX), util.approx(touch.clientY - gameObj.offsetY)];
+            log(e);
+        });
+        gameObj.canvas.addEventListener('touchmove', (e) => {
+            e.preventDefault();
+            touch = e.changedTouches[0];
+            const currentTouch = [util.approx(touch.clientX), util.approx(touch.clientY - gameObj.offsetY)]
+            gameObj.userLastTouch = currentTouch;
+        })
+        gameObj.canvas.addEventListener('touchend', (e) => {
+            e.preventDefault();
+        })
+        function update() {
+        }
+        function getLineHistory() {
+            if (gameObj.currentPlayer === 0) {
+                return 0;
+            } else {
+                return 1;
+            }
+        }
+
+        // utils
+        const util = {};
+        util.approx = (num) => Math.floor(num + 0.5);
+        util.getRandomArbitrary = (min, max) => Math.random() * (max - min) + min;
+        util.drawPath = (ctx, moveTo, lineTo) => {
+            console.log(moveTo, lineTo);
+            ctx.beginPath();
+            ctx.moveTo(...moveTo);
+            ctx.lineTo(...lineTo);
+            ctx.stroke();
+        }
+        init();
+    </script>
+</body>
+
+</html>
