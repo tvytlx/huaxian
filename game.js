@@ -21,6 +21,13 @@ function init() {
         gameObj.blockItems.push(Math.floor(util.getRandomArbitrary(1, gameObj.maxColumn)));
     }
 }
+function getLineHistory() {
+    if (gameObj.currentPlayer === 0) {
+        return 0;
+    } else {
+        return 1;
+    }
+}
 
 // utils
 const util = {};
