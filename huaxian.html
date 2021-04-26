@@ -10,7 +10,7 @@
     <style>
         .x-block-item {
             height: 2rem;
-            width: 1px;
+            width: 2px;
             background-color: black;
         }
 
@@ -37,7 +37,7 @@
         <div class="flex flex-col flex-grow bg-gray-100 py-10" id="playground">
             <div v-for="(num, idx) in gameObj.blockItems" :key="idx" class="flex flex-row self-center h-full space-x-8">
                 <div v-for="i in num" :key="i" class="h-6 x-block-item" style="position: relative">
-                    <div v-if="isSelected(idx, i)" class="x-float-divide"></div>
+                    <div v-if="isSelected(idx, i - 1) && rerender" class="x-float-divide"></div>
                 </div>
             </div>
         </div>
