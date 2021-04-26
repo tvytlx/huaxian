@@ -18,10 +18,10 @@ var app = new Vue({
         this.timer = setInterval(()=>this.userClock--, 1000)
         this.isStart = true;
         this.gameOver = false;
+        this.selectedItems = [];
         this.$nextTick(() => {
             const itemElms = document.querySelectorAll('.x-block-item');
             this.itemsPositions = Array.from(itemElms).map(elm => elm.getClientRects()[0]);
-            this.selectedItems = [];
         });
     },
     withDraw() {
