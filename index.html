@@ -17,7 +17,7 @@
         .x-float-divide {
             height: 1px;
             width: 2.3rem;
-            background-color: red;
+            background-color: black;
             position: absolute;
             left: -1rem;
             top: 0.75rem;
@@ -37,7 +37,8 @@
         <div class="flex flex-col flex-grow bg-gray-100 py-10" id="playground">
             <div v-for="(num, idx) in gameObj.blockItems" :key="idx" class="flex flex-row self-center h-full space-x-8">
                 <div v-for="i in num" :key="i" class="h-6 x-block-item" style="position: relative">
-                    <div v-if="isSelected(idx, i - 1) && rerender" class="x-float-divide"></div>
+                    <div v-if="isSelected(idx, i - 1) && rerender" class="x-float-divide"
+                        :style="{ backgroundColor: selectedColor(idx, i - 1)}"></div>
                 </div>
             </div>
         </div>

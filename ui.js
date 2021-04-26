@@ -8,28 +8,42 @@ var app = new Vue({
     itemsPositions: [],
     lastTouch: null,
     rerender: true,
+    isStart: false,
   },
   methods: {
     startGame(){
         this.timer = setInterval(()=>this.userClock--, 1000)
+        this.isStart = true;
     },
     reloadGame(){
         init();
         this.userClock = 30;
         clearInterval(this.timer);
         this.selectedItems = [];
+        this.itemsPositions = [];
+        this.isStart = false;
     },
     withDraw() {
+        if(!this.isStart) return;
         this.selectedItems = this.selectedItems.slice(0, this.selectedItems.length - 1);
     },
     confirm() {
+        if(!this.isStart) return;
         gameObj.switchSide();
         this.userClock = 30;
         clearInterval(this.timer);
     },
     isSelected(i, j) {
         const target = i === 0 ? j : this.gameObj.blockItems.slice(0, i).reduce((a, b) => a + b) + j;
-        return this.selectedItems.find(elm => elm === target) !== undefined;
+        return this.selectedItems.find(elm => elm[0] === target) !== undefined;
+    },
+    selectedColor(i, j) {
+        const target = i === 0 ? j : this.gameObj.blockItems.slice(0, i).reduce((a, b) => a + b) + j;
+        const elm = this.selectedItems.find(elm => elm[0] === target);
+        if (elm !== undefined) {
+            return elm[1];
+        }
+        return 'none';
     },
     isOverLap(a, b) {
         var a_min_x = a.x;
@@ -49,8 +63,8 @@ var app = new Vue({
     },
     compareRect(rect) {
         this.itemsPositions.forEach((itemRect, idx) => {
-            if(this.isOverLap(rect, itemRect) && this.selectedItems.find(elm => elm === idx) === undefined) {
-                this.selectedItems = [...this.selectedItems, idx];
+            if(this.isOverLap(rect, itemRect) && this.selectedItems.find(elm => elm[0] === idx) === undefined) {
+                this.selectedItems = [...this.selectedItems, [idx, gameObj.getPlayerColor()]];
                 this.rerender = false;
                 this.$nextTick(()=>{
                     this.rerender = true;
